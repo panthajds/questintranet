@@ -1,0 +1,11 @@
+services/web/project/client/dist/bundle.js
+core/__pycache__/gunicorn_ini.cpython-38.pyc
+core/app/__pycache__/__init__.cpython-38.pyc
+core/app/__pycache__/config.cpython-38.pyc
+core/app/__pycache__/forms.cpython-38.pyc
+core/app/__pycache__/models.cpython-38.pyc
+core/app/application/__pycache__/__init__.cpython-38.pyc
+core/app/application/__pycache__/routes.cpython-38.pyc
+**/node_modules/*
+**/bundle.js
+**/assets/*

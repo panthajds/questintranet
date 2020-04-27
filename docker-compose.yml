@@ -1,0 +1,83 @@
+# File  : docker-compose.yml
+# Author: Matthieu Petiteau <mpetiteau.pro@gmail.com>
+# Date  : 04.12.2019
+
+# In our nginx service with pass to our build the args
+# DOMAIN and FLASK so we can populate our nginx server
+# config automatically. see nginx/Dockerfile
+
+version: "3.2"
+
+services:
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        # Pass the name of our Domain from .env
+        DOMAIN: ${DOMAIN}
+        # Pass the name of our docker-compose service to avoid
+        # having to modify it in Nginx if we want to change it.
+        FLASK: application
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - static_volume:/home/app/static
+      - media_volume:/home/app/media
+    depends_on:
+      - application
+
+  application:
+    build: ./core
+    # Our Flask app is built to run as a module (`app`). The
+    # app configs are set-up directly in `app/__init__.py`
+    command: gunicorn -c gunicorn_ini.py app:app
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - ./.env
+    ports:
+      - 5000:5000
+
+  webpack:
+    container_name: webpack
+    build:
+      context: ./core/app/client
+    environment:
+      - RUN_MODE=build
+    volumes:
+      - ./core/app/client:/usr/src/app/
+      - /usr/src/app/node_modules
+
+  redis:
+    image: 'redis:3.0-alpine'
+    # command: redis-server --requirepass devpassword
+    # volumes:
+    #   - 'redis:/data'
+    # ports:
+    #   - '6379:6379'
+
+  celery:
+    build: ./core
+    command: celery -A app.celery worker -l info
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: ./core
+    command: celery -A app.celery beat -l info
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - redis
+
+
+
+volumes:
+  static_volume:
+  media_volume:
+  redis:
+

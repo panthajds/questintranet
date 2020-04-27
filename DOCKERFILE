@@ -1,0 +1,31 @@
+# FROM ubuntu
+
+# ENV DEBIAN_FRONTEND noninteractive
+# RUN apt-get update && \
+#     apt-get -y install gcc mono-mcs && \
+#     rm -rf /var/lib/apt/lists/*
+
+FROM python:3.6-alpine
+
+RUN adduser -D hydraze
+
+WORKDIR /home/hydraze
+
+COPY requirements.txt requirements.txt
+RUN pip install --upgrade pip
+RUN python -m venv venv
+RUN venv/bin/pip install -r requirements.txt
+RUN venv/bin/pip install gunicorn
+
+COPY app app
+COPY migrations migrations
+COPY hydraze.py config.py boot.sh ./
+RUN chmod +x boot.sh
+
+ENV FLASK_APP hydraze.py
+
+RUN chown -R hydraze:hydraze ./
+USER hydraze
+
+EXPOSE 5000
+ENTRYPOINT ["./boot.sh"]
