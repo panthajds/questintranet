@@ -14,11 +14,11 @@ services:
     build: ./core
     # Our Flask app is built to run as a module (`app`). The 
     # app configs are set-up directly in `app/__init__.py`
-    command: gunicorn -c gunicorn_ini.py app:app
+    command: gunicorn --log-level debug -c gunicorn_ini.py app:app
     env_file:
       - ./.env
     ports:
-      - 8000:5000
+      - 5000:5000
 
 #   webpack:
 #     container_name: webpack

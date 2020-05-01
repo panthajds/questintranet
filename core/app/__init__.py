@@ -16,6 +16,15 @@ from celery import Celery
 from celery.schedules import crontab
 from flask_mail import Mail, Message
 # from flask_login import LoginManager
+import pprint
+import six
+import httplib2
+from googleapiclient.discovery import build
+import googleapiclient.http
+import oauth2client.client
+import tempfile
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 CELERY_TASK_LIST = [
     'app.application.tasks',
@@ -27,6 +36,8 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab()  # execute every minute
     }
 }
+
+
 
 db = SQLAlchemy()
 migrate = Migrate()
