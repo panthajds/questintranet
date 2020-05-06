@@ -63,3 +63,4 @@ app.register_blueprint(main_bp)
 
 
 from app.application import routes
+

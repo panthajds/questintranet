@@ -27,9 +27,11 @@ import {
 import React, { Component } from "react";
 import axios from "axios";
 import { DeleteModal, LatchDeviceViewModal, FlushDeviceViewModal } from "./modals.jsx"
+import { DownloadButton } from './buttons.jsx';
+import {FileModal} from './modals.jsx';
 
 
-export class StallTable extends Component {
+export class DocumentTable extends Component {
     constructor(props) {
         super(props)
         this.handlePage = this.handlePage.bind(this);
@@ -56,9 +58,9 @@ export class StallTable extends Component {
 
     getElements() {
         let self = this;
-        axios.get('/stalls')
+        axios.get('/folder/'+this.props.folder_id)
             .then(res => {
-                const data = res.data.data.stalls;
+                const data = res.data.files;
                 this.setState({ elements: data, shouldUpdate: true });
             })
             .catch(function (error) {
@@ -76,13 +78,13 @@ export class StallTable extends Component {
     }
 
     createList(elems) {
-        return elems.map(stall => (
-            <tr key={stall.id}>
-                <td> {stall.name}</td>
-                <td> {stall.version}</td>
-                <td> {stall.status}</td>
-                <td> <FlushDeviceViewModal flush={stall.flush} /></td>
-                <td> <LatchDeviceViewModal latch={stall.latch} /></td>
+        return elems.map(item => (
+            <tr key={item.id}>
+                <td> {item.name}</td>
+                <td> {item.mimeType}</td>
+                <td> {item.kind}</td>
+                <td> <DownloadButton file_id={item.id} file_name={item.name}/></td>
+                {/* <td><FlushDeviceViewModal></FlushDeviceViewModal></td> */}
             </tr>
         ))
     }
@@ -120,11 +122,10 @@ export class StallTable extends Component {
 
     tableHeader() {
         return <tr>
-            <th>Stall ID</th>
+            <th>Document/Folder Name</th>
             <th>Type</th>
-            <th>Status</th>
-            <th>Flush Device</th>
-            <th>Latch Device</th>
+            <th>Kind</th>
+            <th>Download</th>
         </tr>
     }
 
@@ -154,6 +155,133 @@ export class StallTable extends Component {
     }
 
 }
+
+
+export class FolderTable extends Component {
+    constructor(props) {
+        super(props)
+        this.handlePage = this.handlePage.bind(this);
+        this.elementTable = this.elementTable.bind(this);
+        this.handleCheckBox = this.handleCheckBox.bind(this);
+        this.state = {
+            shouldUpdate: this.props.shouldUpdate,
+            elements: [],
+            activePage: 1,
+            searchTerm: '',
+            pages: 1
+        }
+    }
+
+    componentDidMount() {
+        let self = this;
+        self.getElements();
+
+    }
+
+    capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    getElements() {
+        let self = this;
+        axios.get('/test')
+            .then(res => {
+                const data = res.data.files;
+                this.setState({ elements: data, shouldUpdate: true });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+    }
+
+    componentWillReceiveProps(newProps) {
+        let self = this;
+        // this.setState({groupKey: newProps.groupKey, searchTerm: newProps.searchTerm}, function () {
+        //     self.getTasks();
+        // })
+    }
+
+    createList(elems) {
+        return elems.map(item => (
+            <tr key={item.id}>
+                <td> {item.name}</td>
+                <td> {item.mimeType}</td>
+                <td> {item.kind}</td>
+                {/* {/* <td> <FlushDeviceViewModal flush={stall.flush} /></td> */}
+                <td> <FileModal folder_id={item.id} folder_name={item.name}/></td>
+            </tr>
+        ))
+    }
+
+    handlePage(eventKey) {
+        this.setState({
+            activePage: eventKey,
+        }, function () {
+            this.getElements()
+        });
+
+    }
+
+    handleCheckBox(event) {
+        this.setState({ [event.target.name]: event.target.checked }, function () {
+            this.getElements()
+        });
+    }
+
+    pagination() {
+        if (this.state.pages > 1) {
+
+            return <Pagination
+                prev
+                next
+                ellipsis
+                boundaryLinks
+                items={this.state.pages}
+                maxButtons={4}
+                activePage={this.state.activePage}
+                onSelect={this.handlePage} />
+        }
+
+    }
+
+    tableHeader() {
+        return <tr>
+            <th>Document/Folder Name</th>
+            <th>Type</th>
+            <th>Kind</th>
+            <th>Open</th>
+        </tr>
+    }
+
+    elementTable() {
+        if (this.createList(this.state.elements).length <= 0)
+            return <h4>No results, try changing your filters.</h4>
+        else
+            return <Table>
+                <thead>
+                    {this.tableHeader()}
+                </thead>
+                <tbody>
+                    {
+                        this.createList(this.state.elements)
+                    }
+                </tbody>
+            </Table>
+        {
+            this.pagination()
+        }
+    }
+
+    render() {
+        return <div>
+            {this.elementTable()}
+        </div>
+    }
+
+}
+
 
 export class ActuationTable extends Component {
     constructor(props) {

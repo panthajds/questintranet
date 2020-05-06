@@ -1,10 +1,4 @@
-# File  : docker-compose.yml
-# Author: Matthieu Petiteau <mpetiteau.pro@gmail.com>
-# Date  : 04.12.2019
 
-# In our nginx service with pass to our build the args
-# DOMAIN and FLASK so we can populate our nginx server
-# config automatically. see nginx/Dockerfile
 
 version: "3.2"
 
@@ -14,7 +8,7 @@ services:
     build: ./core
     # Our Flask app is built to run as a module (`app`). The 
     # app configs are set-up directly in `app/__init__.py`
-    command: gunicorn --log-level debug -c gunicorn_ini.py app:app
+    command: flask run --host=0.0.0.0 --port=5000
     env_file:
       - ./.env
     ports:

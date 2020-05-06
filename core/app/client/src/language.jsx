@@ -92,7 +92,10 @@ export const buttons = {
     },
     loveButton:{
         button: "Show Hydraze Some Love"
-    }
+    },
+    downloadButton:{
+        button: "Download"
+    },
 }
 export const taskTable = {
     first: "Name",

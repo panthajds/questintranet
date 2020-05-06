@@ -1,27 +1,35 @@
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request, jsonify, session, send_file
 from flask_mail import Message
 # from flask_login import current_user, login_user, logout_user, login_required
 from app.application import bp
 from app import db, app
 # from app.forms import LoginForm, RegistrationForm
-# from app.models import Flush, FlushDevice, FlushMaintenance, LatchDevice, Actuation, LatchMaintenance, User, Manager, Stall, Building, Bathroom, Company 
+# from app.models import Flush, FlushDevice, FlushMaintenance, LatchDevice, Actuation, LatchMaintenance, User, Manager, Stall, Building, Bathroom, Company
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.urls import url_parse
 import pprint
 import six
 import httplib2
 from googleapiclient.discovery import build
-import googleapiclient.http
+import googleapiclient.http as ghttp
 import oauth2client.client as client
 import tempfile
-from google_auth_oauthlib.flow import InstalledAppFlow
+import google_auth_oauthlib
 from google.auth.transport.requests import Request
 import json
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
+import io
+import os
+
+API_SERVICE_NAME = 'drive'
+API_VERSION = 'v3'
 
 SCOPES = 'https://www.googleapis.com/auth/drive'
 
 # Location of the client secrets.
-CLIENT_SECRETS = 'credentials.json'
+CLIENT_SECRETS_FILE = 'credentials.json'
 
 # Path to the file to upload.
 FILENAME = 'document.txt'
@@ -34,9 +42,8 @@ DESCRIPTION = 'A shiny new text document about hello world.'
 
 UPLOAD_FOLDER = '/uploads'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+# Create an authorized Drive API client.
 
-
-            # Create an authorized Drive API client.
 
 @bp.route('/')
 def index():
@@ -48,60 +55,76 @@ def index():
 # def magic(path):
 #     return render_template('magic.html')
 
+
 @bp.route('/pastproj')
 # @login_required
 def pastproj():
     return render_template('pastproj.html')
+
 
 @bp.route('/roomreserve')
 # @login_required
 def roomreserve():
     return render_template('roomreserve.html')
 
+
 @bp.route('/calendar')
 # @login_required
 def calendar():
     return render_template('calendar.html')
 
+
 @bp.route('/career')
 # @login_required
 def career():
-    return render_template('career.html')
+    if 'credentials' not in session:
+        return redirect('authorize')
+    return render_template('magic.html')
 
-@bp.route('/storeauthcode/4/<code>', methods=['POST'])
-def storeauthcode(code):
-    if request.method == 'POST':
-        print(code)
-        with open('auth_code.txt', 'w') as f:
-            f.write('4/'+code)
-        f.close()
-        return jsonify({'status' : 'success'}), 200
+# @bp.route('/storeauthcode/4/<code>', methods=['POST'])
+# def storeauthcode(code):
+#     if request.method == 'POST':
+#         print(code)
+#         with open('auth_code.txt', 'w') as f:
+#             f.write('4/'+code)
+#         f.close()
+#         return jsonify({'status' : 'success'}), 200
 
-@bp.route('/download', methods=['GET'])
-def download():
-    if request.method == 'GET':
-        auth_code = ''
-        with open('auth_code.txt', 'r') as f:
-            auth_code = f.read()
-        f.close()
-        credentials = client.credentials_from_clientsecrets_and_code(
-            CLIENT_SECRETS,
-            ['https://www.googleapis.com/auth/drive.appdata', 'profile', 'email'],
-            auth_code)
-        service = build('drive', 'v3', credentials=credentials)
-        results = service.files().list(
-        pageSize=10, fields="nextPageToken, files(id, name)").execute()
-        items = results.get('files', [])
-        item_list = []
-        if not items:
-            print('No files found.')
-            return jsonify({'status': 'files not found'}), 200
-        else:
-            print('Files:')
-            for item in items:
-                item_list.append(u'{0} ({1})'.format(item['name'], item['id']))
-            return jsonify({'status': 'success', 'items': item_list}), 200
-            
+
+@bp.route('/download/<file_id>/<file_name>', methods=['GET'])
+def download(file_id, file_name):
+    if 'credentials' not in session:
+        return redirect('authorize')
+
+    # Load credentials from the session.
+    credentials = google.oauth2.credentials.Credentials(
+        **session['credentials'])
+
+    drive = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    request = drive.files().get_media(fileId=file_id)
+    if not os.path.exists(file_name):
+        fh = io.FileIO(file_name, 'wb')
+        downloader = ghttp.MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print('Download ' + str(status.progress() * 100))
+
+    # Save credentials back to session in case access token was refreshed.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+        session['credentials'] = credentials_to_dict(credentials)
+
+    # file_name = file_name[file_name.rindex('/')+1]
+    return jsonify({'file_name': file_name})
+
+
+@bp.route('/view/<file_name>')
+def view(file_name):
+    return send_file('/usr/src/app/core/'+file_name, attachment_filename=file_name)
+
+
 @bp.route('/code')
 def code():
     auth_code = ''
@@ -110,15 +133,147 @@ def code():
     return jsonify({'code': auth_code}), 200
 
 
-@bp.route('/catcherror', methods = ['GET', 'POST'])
+@bp.route('/catcherror', methods=['GET', 'POST'])
 def catcherror():
     global error_message
     print('hai')
     if request.method == 'GET':
-        return jsonify({'error' : error_message}), 200
+        return jsonify({'error': error_message}), 200
     if request.method == 'POST':
         error_message = request.get_json()
-        return jsonify({'error' : error_message}), 200
+        return jsonify({'error': error_message}), 200
+
+
+@app.route('/test')
+def test_api_request():
+    if 'credentials' not in session:
+        return redirect('authorize')
+
+    # Load credentials from the session.
+    credentials = google.oauth2.credentials.Credentials(
+        **session['credentials'])
+
+    drive = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    files = drive.files().list(q="mimeType='application/vnd.google-apps.folder'",
+                               spaces='drive', pageSize=10).execute()
+
+    # Save credentials back to session in case access token was refreshed.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    session['credentials'] = credentials_to_dict(credentials)
+
+    return jsonify(**files)
+
+
+@app.route('/folder/<folder_id>')
+def folder(folder_id):
+    if 'credentials' not in session:
+        return redirect('authorize')
+
+    # Load credentials from the session.
+    credentials = google.oauth2.credentials.Credentials(
+        **session['credentials'])
+
+    drive = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    query = '\''+folder_id+'\' in parents'
+    files = drive.files().list(q=query, spaces='drive', pageSize=10).execute()
+
+    # Save credentials back to session in case access token was refreshed.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    session['credentials'] = credentials_to_dict(credentials)
+
+    return jsonify(**files)
+
+
+@app.route('/authorize')
+def authorize():
+    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES)
+
+    # The URI created here must exactly match one of the authorized redirect URIs
+    # for the OAuth 2.0 client, which you configured in the API Console. If this
+    # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
+    # error.
+    flow.redirect_uri = url_for('oauth2callback', _external=True)
+
+    authorization_url, state = flow.authorization_url(
+        # Enable offline access so that you can refresh an access token without
+        # re-prompting the user for permission. Recommended for web server apps.
+        access_type='offline',
+        # Enable incremental authorization. Recommended as a best practice.
+        include_granted_scopes='true')
+
+    # Store the state so the callback can verify the auth server response.
+    session['state'] = state
+
+    return redirect(authorization_url)
+
+
+@app.route('/oauth2callback')
+def oauth2callback():
+    # Specify the state when creating the flow in the callback so that it can
+    # verified in the authorization server response.
+    state = session['state']
+
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+        CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
+    flow.redirect_uri = url_for('oauth2callback', _external=True)
+
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = request.url
+    flow.fetch_token(authorization_response=authorization_response)
+
+    # Store credentials in the session.
+    # ACTION ITEM: In a production app, you likely want to save these
+    #              credentials in a persistent database instead.
+    credentials = flow.credentials
+    session['credentials'] = credentials_to_dict(credentials)
+
+    return redirect(url_for('test_api_request'))
+
+
+@app.route('/revoke')
+def revoke():
+    if 'credentials' not in session:
+        return ('You need to <a href="/authorize">authorize</a> before ' +
+                'testing the code to revoke credentials.')
+
+    credentials = google.oauth2.credentials.Credentials(
+        **session['credentials'])
+
+    revoke = requests.post('https://oauth2.googleapis.com/revoke',
+                           params={'token': credentials.token},
+                           headers={'content-type': 'application/x-www-form-urlencoded'})
+
+    status_code = getattr(revoke, 'status_code')
+    if status_code == 200:
+        return('Credentials successfully revoked.' + print_index_table())
+    else:
+        return('An error occurred.' + print_index_table())
+
+
+@app.route('/clear')
+def clear_credentials():
+    if 'credentials' in session:
+        del session['credentials']
+    return ('Credentials have been cleared.<br><br>' +
+            print_index_table())
+
+
+def credentials_to_dict(credentials):
+    return {'token': credentials.token,
+            'refresh_token': credentials.refresh_token,
+            'token_uri': credentials.token_uri,
+            'client_id': credentials.client_id,
+            'client_secret': credentials.client_secret,
+            'scopes': credentials.scopes}
+
+
 
 # @bp.route('/user/<user_email>', methods=['GET','POST','PUT'])
 # def user(user_email):
@@ -134,7 +289,7 @@ def catcherror():
 #     if request.method == 'POST':
 #         data = request.get_json()
 #         pw_hash = generate_password_hash(data['password'])
-#         user = User(email=user_email, first_name=data['first_name'], last_name=data['last_name'], photo=data['photo'], 
+#         user = User(email=user_email, first_name=data['first_name'], last_name=data['last_name'], photo=data['photo'],
 #         password_hash=pw_hash)
 #         db.session.add(user)
 #         db.session.commit()
@@ -207,8 +362,6 @@ def catcherror():
 #         flash('Congratulations, you are now a registered user!')
 #         return redirect(url_for('login'))
 #     return render_template('register.html', title='Register', form=form)
-
-
 
 
 # @bp.route('/login_test', methods=['GET'])

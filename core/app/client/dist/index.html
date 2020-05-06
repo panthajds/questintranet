@@ -3,35 +3,6 @@
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
 <head>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
-    </script>
-    <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
-    </script>
-    <script>
-        function start() {
-            gapi.load('auth2', function () {
-                auth2 = gapi.auth2.init({
-                    client_id: '373033338388-3estblicomu3j94e2qq3empemdciibbo.apps.googleusercontent.com',
-                    // Scopes to request in addition to 'profile' and 'email'
-                    scope: 'https://www.googleapis.com/auth/drive'
-                });
-            });
-        }
-    </script>
-    <script>
-        function signInCallback(authResult) {
-            if (authResult['code']) {
-
-                // Hide the sign-in button now that the user is authorized, for example:
-                $('#signinButton').attr('style', 'display: none');
-                $.ajax({
-                    type: 'POST',
-                    url: '/storeauthcode/' + authResult['code'],
-                });
-            } else {
-            }
-        }
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
@@ -73,13 +44,6 @@
                             href="{{ url_for('main.roomreserve') }}">Room Reservation</a></li>
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
                             href="{{ url_for('main.calendar') }}">calendar</a></li>
-                    <button id="signinButton">Sign in with Google</button>
-                    <script>
-                        $('#signinButton').click(function () {
-                            // signInCallback defined in step 6.
-                            auth2.grantOfflineAccess().then(signInCallback);
-                        });
-                    </script>
                 </ul>
             </div>
         </div>

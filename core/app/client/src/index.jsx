@@ -36,9 +36,9 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 import React, { Component } from 'react';
 import axios from 'axios';
-import { StallTable } from './components/tables.jsx';
+import { FolderTable } from './components/tables.jsx';
 import { LoginButtonModal, FlushDeviceViewModal, AddUserButtonModal } from './components/modals.jsx';
-import { LogoutButton, LoveButton } from './components/buttons.jsx';
+import { LogoutButton } from './components/buttons.jsx';
 import { LoveCounter } from './components/counter.jsx';
 import { ReactComponent as Droplet2 } from './components/icon/droplet.svg';
 import { Droplet, Logo } from './components/svgs.jsx';
@@ -85,12 +85,8 @@ class App extends Component {
             <Row>
                 <TopBar />
             </Row>
-           {/* <Row>
-                <StallTable />
-            </Row>*/}
-            <Row>
-                <LoveButton/>
-                <Droplet/>
+           <Row>
+                <FolderTable />
             </Row>
         </Grid>
     }

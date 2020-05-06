@@ -17,7 +17,7 @@ import axios from 'axios'
 import React, { Component } from 'react'
 import TimePicker from 'rc-time-picker'
 import { modals } from '../language.jsx'
-import { ActuationTable, MaintenanceTable, FlushTable } from './tables.jsx';
+import { DocumentTable, MaintenanceTable, FlushTable } from './tables.jsx';
 
 // import {DayPickButtonGroup} from "./button_groups.jsx";
 function Spacer10() {
@@ -27,7 +27,7 @@ function Spacer10() {
 }
 
 
-export class LatchDeviceViewModal extends Component {
+export class FileModal extends Component {
     constructor(props) {
         super(props);
 
@@ -49,10 +49,6 @@ export class LatchDeviceViewModal extends Component {
 
     componentDidMount() {
         let self = this;
-        
-        window.setInterval(function () {
-            self.getLatch();
-          }.bind(this), 1000);
     }
 
     // Load necessary items when opened
@@ -60,60 +56,34 @@ export class LatchDeviceViewModal extends Component {
         this.setState({ showModal: true });
     }
 
-    getLatch() {
-        let self = this;
-        axios.get('/latchdevice/' + this.props.latch)
-            .then(res => {
-                const data = res.data.data;
-                this.setState({ latch: data, shouldUpdate: true });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
-
     createButton() {
         return <Button
-            id="blue-button"
+            id="red-button"
             bsStyle="primary"
             bsSize="large"
             onClick={this.open}
         >
-            Latch
+            Open
         </Button>
     }
 
     render() {
         return <div>
             {this.createButton()}
-            <Modal show={this.state.showModal} onHide={this.close}
+            <Modal show={this.state.showModal} style={{opacity:1}} onHide={this.close}
                 aria-labelledby="contained-modal-title-lg">
                 <Form horizontal onSubmit={this.onSubmit}>
                     <Modal.Header closeButton>
-                        <Modal.Title>{modals.latchModal.title}</Modal.Title>
+                        <Modal.Title>{this.props.folder_name}</Modal.Title>
 
                     </Modal.Header>
                     <Modal.Body>
-                        <Collapse in={this.state.alert}>
-                            <div>
-                                <Alert bsStyle="danger">
-                                    {this.state.alertMessage}
-                                </Alert>
-                            </div>
-                        </Collapse>
-                        <text>{modals.latchModal.serial}: {this.state.latch.serial_no}, </text>
-                        <text>{modals.latchModal.status}: {this.state.latch.status}, </text>
-                        <text>{modals.latchModal.delay} {this.state.latch.delay}, </text>
-                        <text>{modals.latchModal.battery}: {this.state.latch.battery}</text>
                         <Spacer10 />
-                        <h3>Actuations</h3>
-                        <ActuationTable actuations={this.state.latch.actuations} /><Spacer10 />
-                        <h3>Maintenances</h3>
-                        <MaintenanceTable maintenances={this.state.latch.maintenances} />
+                        <h3>Files</h3>
+                        <DocumentTable folder_id={this.props.folder_id} />
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button className="btn" type="submit">{modals.latchModal.button}</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
@@ -144,9 +114,7 @@ export class FlushDeviceViewModal extends Component {
 
     componentDidMount() {
         let self = this;
-        window.setInterval(function () {
-            self.getFlush();
-          }.bind(this), 1000);
+       
     }
 
     // Load necessary items when opened
@@ -154,17 +122,7 @@ export class FlushDeviceViewModal extends Component {
         this.setState({ showModal: true });
     }
 
-    getFlush() {
-        let self = this;
-        axios.get('/flushdevice/' + this.props.flush)
-            .then(res => {
-                const data = res.data.data;
-                this.setState({ flush: data, shouldUpdate: true });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-    }
+
 
     createButton() {
         return <Button
@@ -195,15 +153,6 @@ export class FlushDeviceViewModal extends Component {
                                 </Alert>
                             </div>
                         </Collapse>
-                        <text>{modals.flushModal.serial}: {this.state.flush.serial_no}, </text>
-                        <text>{modals.flushModal.status}: {this.state.flush.status}, </text>
-                        <text>{modals.flushModal.delay} {this.state.flush.delay}, </text>
-                        <text>{modals.flushModal.battery}: {this.state.flush.battery}</text>
-                        <Spacer10 />
-                        <h3>Flushes</h3>
-                        <FlushTable flushes={this.state.flush.flushes} /><Spacer10 />
-                        <h3>Maintenances</h3>
-                        <MaintenanceTable maintenances={this.state.flush.maintenances} />
                     </Modal.Body>
 
                     <Modal.Footer>
