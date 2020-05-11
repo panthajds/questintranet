@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
 <head>
     <meta charset="utf-8" />
@@ -15,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet"
         type="text/css" />
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href=" {{ url_for('static', filename='assets/css/styles.css') }}" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
 </head>
 
 <body id="page-top">
@@ -29,21 +28,22 @@
                 aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
+                    <!--  <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="resources.html">Resources</a></li> -->
                     <!-- DROPDOWN menu -->
                     <li class="nav-item mx-0 mx-lg-1">
                         <div class="dropdown">
                             <a href="#" class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
                                 data-toggle="dropdown">Resources</a>
                             <div class="dropdown-menu">
-                                <a href="{{ url_for('main.career') }}" class="dropdown-item">Career Resources</a>
-                                <a href="{{ url_for('main.pastproj') }}" class="dropdown-item">Past Projects</a>
+                                <a href="career.html" class="dropdown-item">Career Resources</a>
+                                <a href="pastproj.html" class="dropdown-item">Past Projects</a>
                             </div>
                         </div>
                     </li>
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                            href="{{ url_for('main.roomreserve') }}">Room Reservation</a></li>
+                            href="roomreserve.html">Room Reservation</a></li>
                     <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger"
-                            href="{{ url_for('main.calendar') }}">calendar</a></li>
+                            href="calendar.html">Calendar</a></li>
                 </ul>
             </div>
         </div>
@@ -52,9 +52,8 @@
     <!-- Masthead-->
     <header class="masthead bg-primary text-white text-center">
         <div class="container d-flex align-items-center flex-column">
-            <!-- Masthead Avatar Image --> <img class="masthead-avatar mb-5"
-                src="{{ url_for('static', filename='assets/img/QuestCircle.png') }}" alt="Quest Logo" />
-            <!-- Masthead Heading-->
+            <!-- Masthead Avatar Image --> <img class="masthead-avatar mb-5" src="assets/img/QuestCircle.png"
+                alt="Quest Logo" /><!-- Masthead Heading-->
             <br>
             <h1 class="masthead-heading text-uppercase mb-0">QUEST Intranet</h1>
             <!-- Icon Divider-->
@@ -64,7 +63,7 @@
                 <div class="divider-custom-line"></div>
             </div>
             <!-- Masthead Subheading-->
-            <p class="masthead-subheading font-weight-light mb-0"> QUEST for the WIN homies :)</p>
+            <p class="masthead-subheading font-weight-light mb-0"> QUEST for the WIN :)</p>
         </div>
     </header>
 
@@ -89,8 +88,7 @@
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid"
-                            src=" {{ url_for('static', filename='assets/img/portfolio/website.png') }}" alt="" />
+                        <img class="img-fluid" src="assets/img/portfolio/website.png" alt="" />
                     </div>
                 </div>
                 <!-- Portfolio Item 2-->
@@ -101,8 +99,7 @@
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid"
-                            src=" {{ url_for('static', filename='assets/img/portfolio/directory.png') }}" alt="" />
+                        <img class="img-fluid" src="assets/img/portfolio/directory.png" alt="" />
                     </div>
                 </div>
                 <!-- Portfolio Item 3-->
@@ -113,8 +110,7 @@
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid"
-                            src=" {{ url_for('static', filename='assets/img/portfolio/Application.png') }}" alt="" />
+                        <img class="img-fluid" src="assets/img/portfolio/Application.png" alt="" />
                     </div>
                 </div>
                 <!-- Portfolio Item 4-->
@@ -125,8 +121,7 @@
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid" src=" {{ url_for('static', filename='assets/img/portfolio/Press.png') }}"
-                            alt="" />
+                        <img class="img-fluid" src="assets/img/portfolio/Press.png" alt="" />
                     </div>
                 </div>
                 <!-- Portfolio Item 5-->
@@ -137,8 +132,7 @@
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid" src=" {{ url_for('static', filename='assets/img/OH.png') }}"
-                            alt="" />
+                        <img class="img-fluid" src="assets/img/portfolio/OH.png" alt="" />
                     </div>
                 </div>
                 <!-- Portfolio Item 6-->
@@ -149,8 +143,7 @@
                             <div class="portfolio-item-caption-content text-center text-white"><i
                                     class="fas fa-plus fa-3x"></i></div>
                         </div>
-                        <img class="img-fluid"
-                            src=" {{ url_for('static', filename='assets/img/portfolio/pastproj.png') }}" alt="" />
+                        <img class="img-fluid" src="assets/img/portfolio/pastproj.png" alt="" />
                     </div>
                 </div>
             </div>
@@ -179,6 +172,10 @@
                         previously were located in the QUEST resource folder. You can also view upcoming events on the
                         QUEST calendar as well as reserve a conference room in the QUEST lab.</p>
                 </div>
+            </div>
+            <!-- About Section Button-->
+            <div class="text-center mt-4">
+                <a class="btn btn-xl btn-outline-light" href="career.html">Check out some cool QUEST Resources!</a>
             </div>
         </div>
     </section>
@@ -241,8 +238,7 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
                                 <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"
-                                    src=" {{ url_for('static', filename='assets/img/portfolio/website.png') }}"
-                                    alt="" /><!-- Portfolio Modal - Text-->
+                                    src="assets/img/portfolio/website.png" alt="" /><!-- Portfolio Modal - Text-->
                                 <p class="mb-5">The QUEST Website has all the information you may need about the QUEST
                                     Honors Program. <br> There is a lot of valuble information for current students,
                                     prospective students, alumni and corporate partners. </p>
@@ -270,10 +266,9 @@
                             <div class="col-lg-8">
 
                                 <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"
-                                    src=" {{ url_for('static', filename='assets/img/portfolio/directory.png') }}"
-                                    alt="" /><!-- Portfolio Modal - Text-->
-                                    <p class="mb-5">The QUEST Directory contains contacts of all current and past QUEST	
-                                        students! </p>
+                                    src="assets/img/portfolio/directory.png" alt="" /><!-- Portfolio Modal - Text-->
+                                <p class="mb-5">The QUEST Directory contains contacts of all current and past QUEST
+                                    students! </p>
                                 <a class="btn btn-xl btn-primary" href="http://quest.umd.edu/directory/"></i>Access
                                     Directory</a>
                             </div>
@@ -296,28 +291,12 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
 
-                                <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"	
-                                src=" {{ url_for('static', filename='assets/img/OH.png') }}" alt="" /><!-- Portfolio Modal - Text-->	
-                                <p class="mb-5"> The guild is here for you and available to chat! <br> Feel free to sign	
-                                    up for office hours via the links below.</p>	
-                                <div class="row">	
-                                    <div class="col" align="center">	
-                                        <a class="btn btn-xl btn-primary"	
-                                            href="https://go.umd.edu/jpbofficehours"></i>Dr.Bailey</a>	
-                                    </div>	
-                                    <div class="col" align="center">	
-                                        <a class="btn btn-xl btn-primary"	
-                                            href="https://go.umd.edu/pkarmstrong"></i>Dr.Armstrong</a>	
-                                    </div>	
-                                    <div class="col" align="center">	
-                                        <a class="btn btn-xl btn-primary"	
-                                            href="https://go.umd.edu/jessroffeofficehours"></i>Jess</a>	
-                                    </div>	
-                                    <div class="col" align="center">	
-                                        <a class="btn btn-xl btn-primary"	
-                                            href="https://go.umd.edu/racheldofficehours"></i>Rachel</a>	
-                                    </div>	
-                                </div>
+                                <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"
+                                    src="assets/img/portfolio/Application.png" alt="" /><!-- Portfolio Modal - Text-->
+                                <p class="mb-5"> Know any potentially great QUEST students? Make sure to send them the
+                                    QUEST Application when it goes live. Usually sometime in mid-December! <br> Also
+                                    click on the link below to access application reading and interview scoring forms.
+                                </p>
                                 <a class="btn btn-xl btn-primary" href="http://apply.questumd.com/"></i>View Application
                                     Site</a>
                             </div>
@@ -341,13 +320,11 @@
                             <div class="col-lg-8">
 
                                 <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"
-                                    src=" {{ url_for('static', filename='assets/img/portfolio/Press.png') }}" alt="" />
-                                <p class="mb-5"> This link can take you to all of the QUEST conference programs and	
-                                    portfolios (going all the way back to 2008). If you want more detailed information	
-                                    about past QUEST projects (such as presentations & SOW) you can access this through	
-                                    the resources tab in the menu above. </p>	
-                                <a class="btn btn-xl btn-primary" href="http://quest.umd.edu/conference/"></i>View	
-                                    Conference Portfolios</a>
+                                    src="assets/img/portfolio/press.png" alt="" /><!-- Portfolio Modal - Text-->
+                                <p class="mb-5"> Stay up to date with all things QUEST by reading the monthly
+                                    QUESTPress.<br> Providing the latest news on the QUEST Community! </p>
+                                <a class="btn btn-xl btn-primary"
+                                    href="https://blogs.rhsmith.umd.edu/questpress/"></i>Read Now</a>
                             </div>
                         </div>
                     </div>
@@ -368,20 +345,34 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
                                 <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"
-                                    src=" {{ url_for('static', filename='assets/img/portfolio/safe.png') }}" alt="" />
-                                <!-- Portfolio Modal - Text-->
-                                <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia neque
-                                    assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam
-                                    velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.
-                                </p>
-                                <a class="btn btn-xl btn-primary"
-                                    href="https://blogs.rhsmith.umd.edu/questpress/"></i>Read Now</a>
+                                    src="assets/img/portfolio/OH.png" alt="" /><!-- Portfolio Modal - Text-->
+                                <p class="mb-5"> The guild is here for you and available to chat! <br> Feel free to sign
+                                    up for office hours via the links below.</p>
+                                <div class="row">
+                                    <div class="col" align="center">
+                                        <a class="btn btn-xl btn-primary"
+                                            href="https://go.umd.edu/jpbofficehours"></i>Dr.Bailey</a>
+                                    </div>
+                                    <div class="col" align="center">
+                                        <a class="btn btn-xl btn-primary"
+                                            href="https://go.umd.edu/pkarmstrong"></i>Dr.Armstrong</a>
+                                    </div>
+                                    <div class="col" align="center">
+                                        <a class="btn btn-xl btn-primary"
+                                            href="https://go.umd.edu/jessroffeofficehours"></i>Jess</a>
+                                    </div>
+                                    <div class="col" align="center">
+                                        <a class="btn btn-xl btn-primary"
+                                            href="https://go.umd.edu/racheldofficehours"></i>Rachel</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- Portfolio Modal 6-->
     <div class="portfolio-modal modal fade" id="portfolioModal6" tabindex="-1" role="dialog"
@@ -396,14 +387,13 @@
                         <div class="row justify-content-center">
                             <div class="col-lg-8">
                                 <!-- Portfolio Modal - Image--><img class="img-fluid rounded mb-5"
-                                    src=" {{ url_for('static', filename='assets/img/portfolio/submarine.png') }}"
-                                    alt="" /><!-- Portfolio Modal - Text-->
-                                <p class="mb-5">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia neque
-                                    assumenda ipsam nihil, molestias magnam, recusandae quos quis inventore quisquam
-                                    velit asperiores, vitae? Reprehenderit soluta, eos quod consequuntur itaque. Nam.
-                                </p>
-                                <a class="btn btn-xl btn-primary"
-                                    href="https://blogs.rhsmith.umd.edu/questpress/"></i>Read Now</a>
+                                    src="assets/img/portfolio/pastproj.png" alt="" /><!-- Portfolio Modal - Text-->
+                                <p class="mb-5"> This link can take you to all of the QUEST conference programs and
+                                    portfolios (going all the way back to 2008). If you want more detailed information
+                                    about past QUEST projects (such as presentations & SOW) you can access this through
+                                    the resources tab in the menu above. </p>
+                                <a class="btn btn-xl btn-primary" href="http://quest.umd.edu/conference/"></i>View
+                                    Conference Portfolios</a>
                             </div>
                         </div>
                     </div>
@@ -417,10 +407,10 @@
     <!-- Third party plugin JS-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
     <!-- Contact form JS-->
-    <script src=" {{ url_for('static', filename='assets/mail/jqBootstrapValidation.js') }}"></script>
-    <script src=" {{ url_for('static', filename='assets/mail/contact_me.js') }}"></script>
+    <script src="assets/mail/jqBootstrapValidation.js"></script>
+    <script src="assets/mail/contact_me.js"></script>
     <!-- Core theme JS-->
-    <script src=" {{ url_for('static', filename='assets/js/scripts.js') }}"></script>
+    <script src="js/scripts.js"></script>
 </body>
 
 </html>
